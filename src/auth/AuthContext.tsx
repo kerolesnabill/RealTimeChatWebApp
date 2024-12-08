@@ -10,6 +10,7 @@ interface AuthContextProps {
   user: IUser | null;
   login: (token: string) => void;
   logout: () => void;
+  setUser: (user: IUser) => void;
 }
 
 interface IUser {
@@ -63,7 +64,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, token, login, logout, isLoading, user }}
+      value={{
+        isAuthenticated,
+        token,
+        login,
+        logout,
+        isLoading,
+        user,
+        setUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -8,6 +8,7 @@ import { AuthProvider } from "./auth/AuthContext.tsx";
 import Signup from "./pages/Signup.tsx";
 import Login from "./pages/Login.tsx";
 import Layout from "./Layout.tsx";
+import Profile from "./pages/Profile.tsx";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ createRoot(document.getElementById("root")!).render(
               <Route index element={<App />} />
               <Route path="signup" element={<Signup />} />
               <Route path="login" element={<Login />} />
+              <Route path="profile" element={<Profile />} />
             </Route>
           </Routes>
         </AuthProvider>
