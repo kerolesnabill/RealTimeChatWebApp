@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import apiClient from "../api/axios";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 const Login = () => {
-  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -18,8 +18,7 @@ const Login = () => {
     mutationFn: (data: {}) => apiClient.post("users/login", data),
     onSuccess: (response) => {
       const { token } = response.data;
-      localStorage.setItem("token", token);
-      navigate("/");
+      login(token);
     },
     onError: (error: any) => {
       const errors = error?.response?.data?.errors;
