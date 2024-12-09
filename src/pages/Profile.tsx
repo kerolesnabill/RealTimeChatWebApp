@@ -76,7 +76,7 @@ const Profile = () => {
                 <h2 className="text-2xl font-bold">
                   {isEditing ? "Edit Profile" : "Your Profile"}
                 </h2>
-                <Link to="/change-password" className="btn btn-sm btn-accent">
+                <Link to="change-password" className="btn btn-sm btn-accent">
                   Change Password
                 </Link>
               </div>

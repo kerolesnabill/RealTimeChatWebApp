@@ -9,6 +9,7 @@ import Signup from "./pages/Signup.tsx";
 import Login from "./pages/Login.tsx";
 import Layout from "./Layout.tsx";
 import Profile from "./pages/Profile.tsx";
+import ChangePassword from "./pages/ChangePassword.tsx";
 
 const queryClient = new QueryClient();
 
@@ -22,7 +23,10 @@ createRoot(document.getElementById("root")!).render(
               <Route index element={<App />} />
               <Route path="signup" element={<Signup />} />
               <Route path="login" element={<Login />} />
-              <Route path="profile" element={<Profile />} />
+              <Route path="profile">
+                <Route index element={<Profile />} />
+                <Route path="change-password" element={<ChangePassword />} />
+              </Route>
             </Route>
           </Routes>
         </AuthProvider>
