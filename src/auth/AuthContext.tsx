@@ -36,22 +36,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsAuthenticated(!!token);
+    if (token) {
+      setToken(token);
+      getUserData(token);
+    }
+    setIsLoading(false);
+  }, []);
 
+  const getUserData = (token: string) => {
     apiClient
-      .get("users/me")
+      .get("users/me", { headers: { Authorization: `Bearer ${token}` } })
       .then((data: any) => setUser(data.data))
       .catch((error) => {
         if (axios.isAxiosError(error) && error.response?.status === 401)
           logout();
       });
-
-    setIsLoading(false);
-  }, []);
+  };
 
   const login = (token: string) => {
     localStorage.setItem("token", token);
     setIsAuthenticated(true);
     setToken(token);
+    getUserData(token);
     navigate("/");
   };
 

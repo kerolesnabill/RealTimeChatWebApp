@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import profileImg from "../assets/profile.png";
 
 const Navbar = () => {
-  const { isAuthenticated, logout, isLoading } = useAuth();
+  const { isAuthenticated, logout, isLoading, user } = useAuth();
 
   return (
     <nav className="navbar bg-transparent text-white container m-auto">
@@ -16,16 +17,36 @@ const Navbar = () => {
           {!isLoading && (
             <>
               {isAuthenticated ? (
-                <>
-                  <li>
-                    <button
-                      onClick={logout}
-                      className="btn btn-outline btn-warning hover:scale-105 transition-all"
+                <li className="relative">
+                  <div className="dropdown dropdown-end p-0">
+                    <label
+                      tabIndex={0}
+                      className="btn btn-ghost btn-circle avatar"
                     >
-                      Logout
-                    </button>
-                  </li>
-                </>
+                      <div className="w-10 rounded-full border">
+                        <img
+                          src={user?.image || profileImg}
+                          alt="User Profile"
+                        />
+                      </div>
+                    </label>
+                    <ul
+                      tabIndex={0}
+                      className="dropdown-content menu p-2 shadow bg-white text-gray-800 rounded-lg w-52 top-12"
+                    >
+                      <li>
+                        <Link to="/profile" className="hover:bg-gray-200">
+                          Profile
+                        </Link>
+                      </li>
+                      <li>
+                        <button onClick={logout} className="hover:bg-gray-200">
+                          Logout
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
               ) : (
                 <>
                   <li>
