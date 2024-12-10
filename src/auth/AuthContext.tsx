@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../api/axios";
+const apiBaseUrl = import.meta.env.VITE_API_Base_URL;
 
 interface AuthContextProps {
   isLoading: boolean;
@@ -17,7 +18,7 @@ interface IUser {
   id: string;
   name: string;
   username: string;
-  image: string;
+  image: string | null;
   about: string;
   createdAt: Date;
 }
@@ -46,7 +47,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const getUserData = (token: string) => {
     apiClient
       .get("users/me", { headers: { Authorization: `Bearer ${token}` } })
-      .then((data: any) => setUser(data.data))
+      .then(({ data }: any) => {
+        if (data.image) data.image = `${apiBaseUrl}/${data.image}`;
+        setUser(data);
+      })
       .catch((error) => {
         if (axios.isAxiosError(error) && error.response?.status === 401)
           logout();

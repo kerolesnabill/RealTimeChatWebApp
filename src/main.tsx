@@ -10,6 +10,7 @@ import Login from "./pages/Login.tsx";
 import Layout from "./Layout.tsx";
 import Profile from "./pages/Profile.tsx";
 import ChangePassword from "./pages/ChangePassword.tsx";
+import ChangeImage from "./pages/ChangeImage.tsx";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="profile">
                 <Route index element={<Profile />} />
                 <Route path="change-password" element={<ChangePassword />} />
+                <Route path="change-image" element={<ChangeImage />} />
               </Route>
             </Route>
           </Routes>

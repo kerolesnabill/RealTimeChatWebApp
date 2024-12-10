@@ -150,7 +150,8 @@ const Profile = () => {
                   <img
                     src={user.image || profileImg}
                     alt="Profile"
-                    className="w-32 h-32 rounded-full shadow-md"
+                    className="w-32 h-32 rounded-full shadow-md cursor-pointer hover:scale-110 transition-all"
+                    onClick={() => navigate("change-image")}
                   />
                   <div className="text-center">
                     <h3 className="text-xl font-semibold">{user.name}</h3>
