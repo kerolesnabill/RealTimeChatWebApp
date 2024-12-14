@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import profileImg from "../assets/profile.png";
 
 const Navbar = () => {

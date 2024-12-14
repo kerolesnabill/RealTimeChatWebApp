@@ -1,6 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "./auth/AuthContext.tsx";
+import { useAuth } from "./contexts/AuthContext.tsx";
 import { useEffect } from "react";
+import Home from "./components/Home.tsx";
+import { ChatProvider } from "./contexts/ChatContext.tsx";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -24,7 +26,9 @@ function App() {
           <span className="loading loading-bars loading-lg"></span>
         </div>
       ) : (
-        <h1>Home</h1>
+        <ChatProvider>
+          <Home />
+        </ChatProvider>
       )}
     </>
   );
