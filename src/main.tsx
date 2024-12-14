@@ -1,4 +1,3 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
@@ -15,24 +14,22 @@ import ChangeImage from "./pages/ChangeImage.tsx";
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<App />} />
-              <Route path="signup" element={<Signup />} />
-              <Route path="login" element={<Login />} />
-              <Route path="profile">
-                <Route index element={<Profile />} />
-                <Route path="change-password" element={<ChangePassword />} />
-                <Route path="change-image" element={<ChangeImage />} />
-              </Route>
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path="signup" element={<Signup />} />
+            <Route path="login" element={<Login />} />
+            <Route path="profile">
+              <Route index element={<Profile />} />
+              <Route path="change-password" element={<ChangePassword />} />
+              <Route path="change-image" element={<ChangeImage />} />
             </Route>
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
-  </StrictMode>
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
+  </QueryClientProvider>
 );

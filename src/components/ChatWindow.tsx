@@ -9,17 +9,14 @@ interface ChatWindowProps {
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
-  const { messages, setMessages } = useChat();
+  const { messages, setMessages, connection } = useChat();
   const [input, setInput] = useState("");
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>();
 
-  const sendMessage = () => {};
-
   useEffect(() => {
     if (chat && !messages[chat.id]) {
-      console.log("fetch");
       setIsLoading(true);
       setError(null);
 
@@ -36,6 +33,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
         .finally(() => setIsLoading(false));
     }
   }, [chat]);
+
+  const sendMessage = () => {
+    connection
+      .invoke("SendMessage", chat.id, input)
+      .then(() => setInput(""))
+      .catch((err) => console.error(err.toString()));
+  };
 
   return (
     <div className="p-4 h-full flex flex-col">

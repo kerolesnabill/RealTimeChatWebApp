@@ -1,10 +1,37 @@
-import { useState } from "react";
-import { IChat } from "../contexts/ChatContext";
+import { useEffect, useState } from "react";
+import { IChat, IMessage, useChat } from "../contexts/ChatContext";
 import ChatWindow from "../components/ChatWindow";
 import Inbox from "./Inbox";
 
 const Home = () => {
   const [selectedChat, setSelectedChat] = useState<IChat | null>(null);
+  const { connection, messages, setMessages } = useChat();
+
+  useEffect(() => {
+    connection.on("Message", function (message) {
+      const msg = JSON.parse(message);
+      const m: IMessage = {
+        id: msg.Id,
+        chatId: msg.ChatId,
+        senderId: msg.SenderId,
+        content: msg.Content,
+        createdAt: msg.CreatedAt,
+        isDeleted: msg.IsDeleted,
+      };
+
+      if (messages[msg.ChatId]) {
+        const chatMsgs = messages[msg.ChatId];
+        chatMsgs.push(m);
+        setMessages({ ...messages, [msg.ChatId]: chatMsgs });
+      }
+    });
+    connection.on("Error", function (error) {
+      console.log("Error Message: " + error);
+    });
+    connection.start().catch(function (err) {
+      return console.error(err.toString());
+    });
+  }, []);
 
   return (
     <div

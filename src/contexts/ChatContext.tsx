@@ -1,10 +1,14 @@
-import { createContext, useContext, useState } from "react";
+import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useAuth } from "./AuthContext";
+const apiBaseUrl = import.meta.env.VITE_API_Base_URL as string;
 
 interface ChatContextProps {
   chats: IChat[];
   setChats: (chats: IChat[]) => void;
   messages: IChatMessages;
   setMessages: (messages: IChatMessages) => void;
+  connection: HubConnection;
 }
 
 export interface IChat {
@@ -19,7 +23,7 @@ export interface IChat {
 export interface IMessage {
   chatId: string;
   content: string;
-  createdAt: Date;
+  createdAt: string;
   id: string;
   isDeleted: boolean | null;
   senderId: string;
@@ -34,11 +38,24 @@ const ChatContext = createContext<ChatContextProps | undefined>(undefined);
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { token } = useAuth();
+  const hubConnection = new HubConnectionBuilder()
+    .withUrl(`${apiBaseUrl}/ChatHub`, {
+      accessTokenFactory: () => token ?? "",
+    })
+    .withAutomaticReconnect()
+    .build();
+
   const [chats, setChats] = useState<IChat[]>([]);
   const [messages, setMessages] = useState<IChatMessages>({});
+  const [connection, setConnection] = useState<HubConnection>(hubConnection);
+
+  useEffect(() => setConnection(connection), [token]);
 
   return (
-    <ChatContext.Provider value={{ chats, setChats, messages, setMessages }}>
+    <ChatContext.Provider
+      value={{ chats, setChats, messages, setMessages, connection }}
+    >
       {children}
     </ChatContext.Provider>
   );
