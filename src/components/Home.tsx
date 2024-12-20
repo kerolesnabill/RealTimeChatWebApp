@@ -2,41 +2,67 @@ import { useEffect, useState } from "react";
 import { IChat, IMessage, useChat } from "../contexts/ChatContext";
 import ChatWindow from "../components/ChatWindow";
 import Inbox from "./Inbox";
-import { useAuth } from "../contexts/AuthContext";
 
 const Home = () => {
   const [selectedChat, setSelectedChat] = useState<IChat | null>(null);
   const { connection, chatMessages, setChatMessages } = useChat();
-  const { user } = useAuth();
 
   useEffect(() => {
-    connection.on("Message", function (message) {
+    connection.on("ReceiveMessage", function (message) {
       const m = JSON.parse(message);
-      const msg: IMessage = {
-        id: m.Id,
-        senderId: m.SenderId,
-        recipientId: m.RecipientId,
-        content: m.Content,
-        createdAt: m.CreatedAt,
-        deliveredAt: m.DeliveredAt,
-        readAt: m.ReadAt,
-      };
+      const msg = convertMsgJsonToMsgObj(m);
 
-      const chatId = msg.senderId == user?.id ? msg.recipientId : msg.senderId;
+      const messages = chatMessages[msg.senderId];
+      if (messages) {
+        messages.push(msg);
+        setChatMessages({ ...chatMessages, [msg.senderId]: messages });
+      }
 
-      if (chatMessages[chatId]) {
-        const chatMsgs = chatMessages[chatId];
-        chatMsgs.push(m);
-        setChatMessages({ ...chatMessages, [chatId]: chatMsgs });
+      connection
+        .invoke("DeliveredMessage", msg.id)
+        .catch((error) => console.log(error));
+    });
+
+    connection.on("SendMessage", function (message) {
+      const m = JSON.parse(message);
+      const msg = convertMsgJsonToMsgObj(m);
+      const messages = chatMessages[msg.recipientId];
+      messages.push(msg);
+      setChatMessages({ ...chatMessages, [msg.senderId]: messages });
+    });
+
+    connection.on("MessageStatus", function (message) {
+      const m = JSON.parse(message);
+      const msg = convertMsgJsonToMsgObj(m);
+      const messages = chatMessages[msg.recipientId];
+      if (messages) {
+        console.log(msg);
+        const index = messages.findIndex((m) => m.id == msg.id);
+        messages[index] = msg;
+        setChatMessages({ ...chatMessages, [msg.senderId]: messages });
       }
     });
+
     connection.on("Error", function (error) {
       console.log("Error Message: " + error);
     });
+
     connection.start().catch(function (err) {
       return console.error(err.toString());
     });
   }, []);
+
+  function convertMsgJsonToMsgObj(message: any): IMessage {
+    return {
+      id: message.Id,
+      senderId: message.SenderId,
+      recipientId: message.RecipientId,
+      content: message.Content,
+      createdAt: message.CreatedAt,
+      deliveredAt: message.DeliveredAt,
+      readAt: message.ReadAt,
+    };
+  }
 
   return (
     <div
