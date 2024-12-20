@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import apiClient from "../api/axios";
-import userImage from "../assets/profile.png";
 import { useAuth } from "../contexts/AuthContext";
 import { IChat, useChat } from "../contexts/ChatContext";
-const apiBaseUrl = import.meta.env.VITE_API_Base_URL;
+import Chat from "./Chat";
 
 interface InboxProps {
   setSelectedChat: (chat: IChat) => void;
@@ -49,30 +48,11 @@ const Inbox: React.FC<InboxProps> = ({ setSelectedChat }) => {
           </div>
           <ul className="space-y-3">
             {chats.map((chat) => (
-              <li
+              <Chat
+                chat={chat}
+                setSelectedChat={setSelectedChat}
                 key={chat.userId}
-                className="p-1 bg-gray-100 rounded-lg shadow cursor-pointer hover:bg-gray-200 transition-all"
-                onClick={() => setSelectedChat(chat)}
-              >
-                <div className="flex">
-                  <img
-                    className="w-12 h-12 rounded-full"
-                    src={chat.image ? `${apiBaseUrl}/${chat.image}` : userImage}
-                    alt={`${chat.name} image`}
-                  />
-                  <div className="ml-2 w-full">
-                    <div className="flex justify-between">
-                      <p className="font-medium text-gray-800">{chat.name}</p>
-                      <p className="text-xs text-gray-500 truncate max-w-36">
-                        {new Date(chat.lastMessageTime).toLocaleString()}
-                      </p>
-                    </div>
-                    <p className="text-sm text-gray-500 truncate">
-                      {chat.lastMessage}
-                    </p>
-                  </div>
-                </div>
-              </li>
+              />
             ))}
           </ul>
         </>

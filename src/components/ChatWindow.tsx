@@ -3,6 +3,7 @@ import { IChat, IMessage, useChat } from "../contexts/ChatContext";
 import userImage from "../assets/profile.png";
 import apiClient from "../api/axios";
 import { useAuth } from "../contexts/AuthContext";
+import Message from "./Message";
 const apiBaseUrl = import.meta.env.VITE_API_Base_URL;
 
 interface ChatWindowProps {
@@ -10,7 +11,7 @@ interface ChatWindowProps {
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
-  const { token, user } = useAuth();
+  const { token } = useAuth();
   const { chatMessages, setChatMessages, connection } = useChat();
   const [input, setInput] = useState("");
 
@@ -28,7 +29,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
         })
         .then(({ data }: { data: IMessage[] }) => {
           chatMessages[chat.userId] = data;
-
           setChatMessages(chatMessages);
         })
         .catch((error) =>
@@ -49,27 +49,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
   const renderMsg = (msg: IMessage) => {
     const msgDate = new Date(msg.createdAt);
 
-    const msgElement = (
-      <div
-        key={msg.id}
-        className={`flex ${msg.senderId == user?.id && "justify-end"}`}
-      >
-        <div
-          className={`p-2 rounded-lg shadow max-w-xs break-words ${
-            msg.senderId == user?.id ? "bg-blue-300" : "bg-blue-100"
-          }`}
-        >
-          <p>{msg.content}</p>
-          <p className="text-xs mt-1 text-right text-gray-700">
-            {new Date(msg.createdAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </p>
-        </div>
-      </div>
-    );
-
     const dateElement = (
       <div className="flex justify-center mb-4">
         <p className="p-2 rounded-lg shadow bg-slate-100 text-xs">
@@ -83,7 +62,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
       return (
         <div key={msg.id}>
           {dateElement}
-          {msgElement}
+          <Message msg={msg} />
         </div>
       );
     } else if (prvMsgDate.toDateString() != msgDate.toDateString()) {
@@ -91,13 +70,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
       return (
         <div key={msg.id}>
           {dateElement}
-          {msgElement}
+          <Message msg={msg} />
         </div>
       );
     }
 
     prvMsgDate = msgDate;
-    return msgElement;
+    return <Message msg={msg} key={msg.id} />;
   };
 
   return (
