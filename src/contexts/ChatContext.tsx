@@ -6,27 +6,29 @@ const apiBaseUrl = import.meta.env.VITE_API_Base_URL as string;
 interface ChatContextProps {
   chats: IChat[];
   setChats: (chats: IChat[]) => void;
-  messages: IChatMessages;
-  setMessages: (messages: IChatMessages) => void;
+  chatMessages: IChatMessages;
+  setChatMessages: (messages: IChatMessages) => void;
   connection: HubConnection;
 }
 
 export interface IChat {
-  id: string;
+  userId: string;
   name: string;
-  isGroupChat: boolean;
+  username: string;
   image: string;
   lastMessage: string;
   lastMessageTime: string;
+  unreadMessagesCount: number;
 }
 
 export interface IMessage {
-  chatId: string;
+  id: string;
+  senderId: string;
+  recipientId: string;
   content: string;
   createdAt: string;
-  id: string;
-  isDeleted: boolean | null;
-  senderId: string;
+  deliveredAt: string;
+  readAt: string;
 }
 
 interface IChatMessages {
@@ -47,14 +49,14 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     .build();
 
   const [chats, setChats] = useState<IChat[]>([]);
-  const [messages, setMessages] = useState<IChatMessages>({});
+  const [chatMessages, setChatMessages] = useState<IChatMessages>({});
   const [connection, setConnection] = useState<HubConnection>(hubConnection);
 
   useEffect(() => setConnection(connection), [token]);
 
   return (
     <ChatContext.Provider
-      value={{ chats, setChats, messages, setMessages, connection }}
+      value={{ chats, setChats, chatMessages, setChatMessages, connection }}
     >
       {children}
     </ChatContext.Provider>

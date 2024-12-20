@@ -2,27 +2,32 @@ import { useEffect, useState } from "react";
 import { IChat, IMessage, useChat } from "../contexts/ChatContext";
 import ChatWindow from "../components/ChatWindow";
 import Inbox from "./Inbox";
+import { useAuth } from "../contexts/AuthContext";
 
 const Home = () => {
   const [selectedChat, setSelectedChat] = useState<IChat | null>(null);
-  const { connection, messages, setMessages } = useChat();
+  const { connection, chatMessages, setChatMessages } = useChat();
+  const { user } = useAuth();
 
   useEffect(() => {
     connection.on("Message", function (message) {
-      const msg = JSON.parse(message);
-      const m: IMessage = {
-        id: msg.Id,
-        chatId: msg.ChatId,
-        senderId: msg.SenderId,
-        content: msg.Content,
-        createdAt: msg.CreatedAt,
-        isDeleted: msg.IsDeleted,
+      const m = JSON.parse(message);
+      const msg: IMessage = {
+        id: m.Id,
+        senderId: m.SenderId,
+        recipientId: m.RecipientId,
+        content: m.Content,
+        createdAt: m.CreatedAt,
+        deliveredAt: m.DeliveredAt,
+        readAt: m.ReadAt,
       };
 
-      if (messages[msg.ChatId]) {
-        const chatMsgs = messages[msg.ChatId];
+      const chatId = msg.senderId == user?.id ? msg.recipientId : msg.senderId;
+
+      if (chatMessages[chatId]) {
+        const chatMsgs = chatMessages[chatId];
         chatMsgs.push(m);
-        setMessages({ ...messages, [msg.ChatId]: chatMsgs });
+        setChatMessages({ ...chatMessages, [chatId]: chatMsgs });
       }
     });
     connection.on("Error", function (error) {
@@ -37,11 +42,9 @@ const Home = () => {
     <div
       className={`min-h-[90vh] flex bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-inner shadow-current`}
     >
-      {/* Inbox List */}
       <div className="w-1/3 bg-white text-gray-800 shadow-lg">
         <Inbox setSelectedChat={setSelectedChat} />
       </div>
-      {/* Chat Window */}
       <div className="flex-1">
         {selectedChat ? (
           <ChatWindow chat={selectedChat} />

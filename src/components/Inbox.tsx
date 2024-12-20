@@ -14,18 +14,22 @@ const Inbox: React.FC<InboxProps> = ({ setSelectedChat }) => {
   const [error, setError] = useState<string | null>();
 
   const { chats, setChats } = useChat();
-
   const { token } = useAuth();
 
   useEffect(() => {
     setError(null);
-    apiClient
-      .get("/chats", { headers: { Authorization: `Bearer ${token}` } })
-      .then(({ data }) => setChats(data))
-      .catch((error) =>
-        setError(error?.response?.data || "Error while getting chats")
-      )
-      .finally(() => setIsLoading(false));
+    if (token)
+      apiClient
+
+        .get("/chats", { headers: { Authorization: `Bearer ${token}` } })
+        .then(({ data }) => {
+          setChats(data);
+          console.log(data);
+        })
+        .catch((error) =>
+          setError(error?.response?.data || "Error while getting chats")
+        )
+        .finally(() => setIsLoading(false));
   }, []);
 
   return (
@@ -46,7 +50,7 @@ const Inbox: React.FC<InboxProps> = ({ setSelectedChat }) => {
           <ul className="space-y-3">
             {chats.map((chat) => (
               <li
-                key={chat.id}
+                key={chat.userId}
                 className="p-1 bg-gray-100 rounded-lg shadow cursor-pointer hover:bg-gray-200 transition-all"
                 onClick={() => setSelectedChat(chat)}
               >
