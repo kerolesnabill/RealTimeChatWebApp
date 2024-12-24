@@ -30,6 +30,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
         .then(({ data }: { data: IMessage[] }) => {
           chatMessages[chat.userId] = data;
           setChatMessages(chatMessages);
+          readMessages();
         })
         .catch((error) =>
           setError(error?.response?.data || "Error while getting chats")
@@ -42,6 +43,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
     connection
       .invoke("SendMessage", chat.userId, input)
       .then(() => setInput(""))
+      .catch((err) => console.error(err.toString()));
+  };
+
+  const readMessages = () => {
+    connection
+      .invoke("ReadMessages", chat.userId)
       .catch((err) => console.error(err.toString()));
   };
 

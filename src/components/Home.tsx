@@ -31,16 +31,17 @@ const Home = () => {
       setChatMessages({ ...chatMessages, [msg.senderId]: messages });
     });
 
-    connection.on("MessageStatus", function (message) {
-      const m = JSON.parse(message);
-      const msg = convertMsgJsonToMsgObj(m);
-      const messages = chatMessages[msg.recipientId];
-      if (messages) {
-        console.log(msg);
-        const index = messages.findIndex((m) => m.id == msg.id);
-        messages[index] = msg;
-        setChatMessages({ ...chatMessages, [msg.senderId]: messages });
-      }
+    connection.on("MessageStatus", function (messageArray) {
+      const msgs = JSON.parse(messageArray);
+      msgs.forEach((m: any) => {
+        const msg = convertMsgJsonToMsgObj(m);
+        const messages = chatMessages[msg.recipientId];
+        if (messages) {
+          const index = messages.findIndex((m) => m.id == msg.id);
+          messages[index] = msg;
+          setChatMessages({ ...chatMessages, [msg.senderId]: messages });
+        }
+      });
     });
 
     connection.on("Error", function (error) {
