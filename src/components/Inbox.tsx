@@ -3,12 +3,14 @@ import apiClient from "../api/axios";
 import { useAuth } from "../contexts/AuthContext";
 import { IChat, useChat } from "../contexts/ChatContext";
 import Chat from "./Chat";
+import NewChat from "./NewChat";
 
 interface InboxProps {
   setSelectedChat: (chat: IChat) => void;
 }
 
 const Inbox: React.FC<InboxProps> = ({ setSelectedChat }) => {
+  const [isLoadingNewChat, setIsLoadingNewChat] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>();
 
@@ -19,7 +21,6 @@ const Inbox: React.FC<InboxProps> = ({ setSelectedChat }) => {
     setError(null);
     if (token)
       apiClient
-
         .get("/chats", { headers: { Authorization: `Bearer ${token}` } })
         .then(({ data }) => {
           setChats(data);
@@ -31,6 +32,36 @@ const Inbox: React.FC<InboxProps> = ({ setSelectedChat }) => {
         .finally(() => setIsLoading(false));
   }, []);
 
+  const handleStartChat = async (username: string) => {
+    setIsLoadingNewChat(true);
+    setError("");
+
+    apiClient
+      .get(`/users/${username}`)
+      .then(({ data }: any) => {
+        const chat = chats.find((c) => c.userId == data.id);
+        if (chat) {
+          setSelectedChat(chat);
+          return;
+        }
+
+        const newChat: IChat = {
+          userId: data.id,
+          name: data.name,
+          username: data.username,
+          image: data.image,
+          lastMessage: "",
+          lastMessageTime: "",
+          unreadMessagesCount: 0,
+        };
+        setChats([newChat, ...chats]);
+      })
+      .catch(({ response }) => {
+        setError(response.data.error || "An error occurred.");
+      })
+      .finally(() => setIsLoadingNewChat(false));
+  };
+
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-2 text-center lg:text-left">Inbox</h2>
@@ -40,8 +71,10 @@ const Inbox: React.FC<InboxProps> = ({ setSelectedChat }) => {
         </div>
       ) : (
         <>
-          <div className="flex justify-center lg:justify-start">
-            {error && <p className="text-red-600 mt-10">{error}</p>}
+          <NewChat onStartChat={handleStartChat} isLoading={isLoadingNewChat} />
+
+          <div className="flex justify-center lg:justify-start text-sm">
+            {error && <p className="text-red-600 mb-2">{error}</p>}
             {!error && chats.length == 0 && (
               <p className="mt-10 text-center">There are no chats</p>
             )}

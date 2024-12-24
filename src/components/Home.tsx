@@ -85,7 +85,7 @@ const Home = () => {
 
       <div
         className={`md:w-1/3 w-full bg-white text-gray-800 shadow-lg transform md:translate-x-0 ${
-          showInbox ? "translate-x-0" : "-translate-x-full max-md:h-0"
+          showInbox ? "translate-x-0" : "-translate-x-[150%] max-md:h-0"
         } transition-transform duration-300 lg:block`}
       >
         <Inbox setSelectedChat={setSelectedChat} />
