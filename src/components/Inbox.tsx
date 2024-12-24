@@ -33,17 +33,17 @@ const Inbox: React.FC<InboxProps> = ({ setSelectedChat }) => {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-2">Inbox</h2>
+      <h2 className="text-xl font-bold mb-2 text-center lg:text-left">Inbox</h2>
       {isLoading ? (
         <div className="flex justify-center mt-10">
           <span className="loading loading-bars loading-md"></span>
         </div>
       ) : (
         <>
-          <div className="flex justify-center">
+          <div className="flex justify-center lg:justify-start">
             {error && <p className="text-red-600 mt-10">{error}</p>}
             {!error && chats.length == 0 && (
-              <p className="mt-10">There are no chats</p>
+              <p className="mt-10 text-center">There are no chats</p>
             )}
           </div>
           <ul className="space-y-3">

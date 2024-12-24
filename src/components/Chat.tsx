@@ -38,7 +38,7 @@ const Chat = ({ chat, setSelectedChat }: ChatProps) => {
 
   return (
     <li
-      className="p-1 flex gap-2 justify-between max-w-sm bg-gray-100 rounded-lg shadow cursor-pointer hover:bg-gray-200 transition-all"
+      className="p-2 flex flex-row gap-2 justify-between bg-gray-100 rounded-lg shadow cursor-pointer hover:bg-gray-200 transition-all"
       onClick={() => setSelectedChat(chat)}
     >
       <div className="flex gap-2">

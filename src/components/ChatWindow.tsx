@@ -88,18 +88,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
 
   return (
     <div className="p-4 h-full max-h-[90vh] flex flex-col">
-      <div className="flex-1 overflow-y-auto bg-white text-gray-800 shadow-lg rounded-lg p-4 pt-2">
-        <div className="flex gap-3 mb-2">
-          <img
-            className="w-10 h-10 rounded-full my-auto"
-            src={chat.image ? `${apiBaseUrl}/${chat.image}` : userImage}
-            alt={`${chat.name} image`}
-          />
-          <div>
-            <h2 className="text-lg font-bold">{chat.name}</h2>
-            <p className="text-xs">Online</p>
-          </div>
+      <div className="flex flex-row gap-3 items-center bg-white text-gray-800 p-2 rounded-t-lg">
+        <img
+          className="w-10 h-10 rounded-full"
+          src={chat.image ? `${apiBaseUrl}/${chat.image}` : userImage}
+          alt={`${chat.name} image`}
+        />
+        <div className="text-center lg:text-left">
+          <h2 className="text-lg font-bold">{chat.name}</h2>
+          <p className="text-xs">Online</p>
         </div>
+      </div>
+      <div className="flex-1 overflow-auto bg-white text-gray-800 shadow-lg rounded-b-lg p-4">
         <div className="space-y-3">
           {isLoading ? (
             <div className="flex justify-center mt-10">
