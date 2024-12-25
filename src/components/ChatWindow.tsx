@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IChat, IMessage, useChat } from "../contexts/ChatContext";
 import userImage from "../assets/profile.png";
 import apiClient from "../api/axios";
@@ -86,6 +86,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
     return <Message msg={msg} key={msg.id} />;
   };
 
+  const messageContainerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (messageContainerRef.current) {
+      messageContainerRef.current.scrollTop =
+        messageContainerRef.current.scrollHeight;
+    }
+  }, [chatMessages[chat.userId], chatMessages[chat.userId]?.length]);
+
   return (
     <div className="p-4 h-full max-h-[90vh] flex flex-col">
       <div className="flex flex-row gap-3 items-center bg-white text-gray-800 p-2 rounded-t-lg">
@@ -99,7 +107,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
           <p className="text-xs">Online</p>
         </div>
       </div>
-      <div className="flex-1 overflow-auto bg-white text-gray-800 shadow-lg rounded-b-lg p-4">
+      <div
+        ref={messageContainerRef}
+        className="flex-1 overflow-auto bg-white text-gray-800 shadow-lg rounded-b-lg p-4"
+      >
         <div className="space-y-3">
           {isLoading ? (
             <div className="flex justify-center mt-10">
