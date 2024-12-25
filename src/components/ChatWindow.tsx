@@ -30,13 +30,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
         .then(({ data }: { data: IMessage[] }) => {
           chatMessages[chat.userId] = data;
           setChatMessages(chatMessages);
-          readMessages();
         })
         .catch((error) =>
           setError(error?.response?.data || "Error while getting chats")
         )
         .finally(() => setIsLoading(false));
     }
+    readMessages();
   }, [chat]);
 
   const sendMessage = () => {

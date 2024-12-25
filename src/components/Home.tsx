@@ -10,6 +10,7 @@ const Home = () => {
     useChat();
 
   const chatsRef = useRef(chats);
+  const selectedChatRef = useRef(selectedChat);
 
   useEffect(() => {
     connection.on("ReceiveMessage", function (message) {
@@ -22,16 +23,22 @@ const Home = () => {
         setChatMessages({ ...chatMessages, [msg.senderId]: messages });
       }
 
-      connection
-        .invoke("DeliveredMessage", msg.id)
-        .catch((error) => console.log(error));
-
       const chatCopy = [...chatsRef.current];
       const index = chatCopy.findIndex((c) => c.userId == msg.senderId);
       chatCopy[index].lastMessage = msg.content;
       chatCopy[index].lastMessageTime = msg.createdAt;
-      chatCopy[index].unreadMessagesCount++;
       setChats(chatCopy);
+
+      if (selectedChatRef?.current?.userId == msg.senderId) {
+        connection
+          .invoke("DeliveredAndReadMessage", msg.id)
+          .catch((error) => console.log(error));
+      } else {
+        chatCopy[index].unreadMessagesCount++;
+        connection
+          .invoke("DeliveredMessage", msg.id)
+          .catch((error) => console.log(error));
+      }
     });
 
     connection.on("SendMessage", function (message) {
@@ -83,6 +90,7 @@ const Home = () => {
   }
 
   useEffect(() => {
+    selectedChatRef.current = selectedChat;
     selectedChat && setShowInbox(false);
   }, [selectedChat]);
 
