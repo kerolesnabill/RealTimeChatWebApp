@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IChat, IMessage, useChat } from "../contexts/ChatContext";
 import ChatWindow from "../components/ChatWindow";
 import Inbox from "./Inbox";
@@ -6,7 +6,10 @@ import Inbox from "./Inbox";
 const Home = () => {
   const [selectedChat, setSelectedChat] = useState<IChat | null>(null);
   const [showInbox, setShowInbox] = useState(true);
-  const { connection, chatMessages, setChatMessages } = useChat();
+  const { connection, chatMessages, setChatMessages, chats, setChats } =
+    useChat();
+
+  const chatsRef = useRef(chats);
 
   useEffect(() => {
     connection.on("ReceiveMessage", function (message) {
@@ -22,6 +25,13 @@ const Home = () => {
       connection
         .invoke("DeliveredMessage", msg.id)
         .catch((error) => console.log(error));
+
+      const chatCopy = [...chatsRef.current];
+      const index = chatCopy.findIndex((c) => c.userId == msg.senderId);
+      chatCopy[index].lastMessage = msg.content;
+      chatCopy[index].lastMessageTime = msg.createdAt;
+      chatCopy[index].unreadMessagesCount++;
+      setChats(chatCopy);
     });
 
     connection.on("SendMessage", function (message) {
@@ -30,6 +40,12 @@ const Home = () => {
       const messages = chatMessages[msg.recipientId];
       messages.push(msg);
       setChatMessages({ ...chatMessages, [msg.senderId]: messages });
+
+      const chatCopy = [...chatsRef.current];
+      const index = chatCopy.findIndex((c) => c.userId == msg.recipientId);
+      chatCopy[index].lastMessage = msg.content;
+      chatCopy[index].lastMessageTime = msg.createdAt;
+      setChats(chatCopy);
     });
 
     connection.on("MessageStatus", function (messageArray) {
@@ -69,6 +85,10 @@ const Home = () => {
   useEffect(() => {
     selectedChat && setShowInbox(false);
   }, [selectedChat]);
+
+  useEffect(() => {
+    chatsRef.current = chats;
+  }, [chats]);
 
   return (
     <div

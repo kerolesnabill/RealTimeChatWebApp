@@ -22,10 +22,7 @@ const Inbox: React.FC<InboxProps> = ({ setSelectedChat }) => {
     if (token)
       apiClient
         .get("/chats", { headers: { Authorization: `Bearer ${token}` } })
-        .then(({ data }) => {
-          setChats(data);
-          console.log(data);
-        })
+        .then(({ data }) => setChats(data))
         .catch((error) =>
           setError(error?.response?.data || "Error while getting chats")
         )

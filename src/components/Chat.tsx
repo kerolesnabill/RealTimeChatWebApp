@@ -39,7 +39,10 @@ const Chat = ({ chat, setSelectedChat }: ChatProps) => {
   return (
     <li
       className="p-2 flex flex-row gap-2 justify-between bg-gray-100 rounded-lg shadow cursor-pointer hover:bg-gray-200 transition-all"
-      onClick={() => setSelectedChat(chat)}
+      onClick={() => {
+        setSelectedChat(chat);
+        chat.unreadMessagesCount = 0;
+      }}
     >
       <div className="flex gap-2">
         <img
