@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import apiClient from "../api/axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, isLoading, isAuthenticated } = useAuth();
+  const navigator = useNavigate();
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) navigator("/");
+  }, [isLoading]);
 
   const [formData, setFormData] = useState({
     username: "",
