@@ -104,7 +104,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
         />
         <div className="text-center lg:text-left">
           <h2 className="text-lg font-bold">{chat.name}</h2>
-          <p className="text-xs">Online</p>
+          {/* <p className="text-xs">Online</p> */}
         </div>
       </div>
       <div
